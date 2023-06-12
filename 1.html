@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>视频播放和选择题</title>
+    <style>
+        /* 样式 */
+        .question-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+        }
+        
+        .question-container.active {
+            visibility: visible;
+        }
+        
+        .question {
+            background-color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <video id="video" src="1.mp4" controls></video>
+
+    <div class="question-container" id="question1">
+        <div class="question">
+            <h3>问题1: 这是问题1的内容</h3>
+            <input type="radio" name="answer1" value="A">选项A<br>
+            <input type="radio" name="answer1" value="B">选项B<br>
+            <input type="radio" name="answer1" value="C">选项C<br>
+            <button onclick="checkAnswer(1)">提交</button>
+            <p id="answer1-feedback"></p>
+        </div>
+    </div>
+
+    <div class="question-container" id="question2">
+        <div class="question">
+            <h3>问题2: 这是问题2的内容</h3>
+            <input type="radio" name="answer2" value="A">选项A<br>
+            <input type="radio" name="answer2" value="B">选项B<br>
+            <input type="radio" name="answer2" value="C">选项C<br>
+            <button onclick="checkAnswer(2)">提交</button>
+            <p id="answer2-feedback"></p>
+        </div>
+    </div>
+
+    <div class="question-container" id="question3">
+        <div class="question">
+            <h3>问题3: 这是问题3的内容</h3>
+            <input type="radio" name="answer3" value="A">选项A<br>
+            <input type="radio" name="answer3" value="B">选项B<br>
+            <input type="radio" name="answer3" value="C">选项C<br>
+            <button onclick="checkAnswer(3)">提交</button>
+            <p id="answer3-feedback"></p>
+        </div>
+    </div>
+
+    <script>
+        var video = document.getElementById("video");
+        var questionContainers = document.querySelectorAll(".question-container");
+        var currentQuestion = 1;
+
+        video.addEventListener("timeupdate", function() {
+            var currentTime = video.currentTime;
+            if (currentTime >= 10 && currentTime <= 20 && currentQuestion === 1) {
+                showQuestion(1);
+            } else if (currentTime >= 30 && currentTime <= 40 && currentQuestion === 2) {
+                showQuestion(2);
+            } else if (currentTime >= 50 && currentTime <= 60 && currentQuestion === 3) {
+                showQuestion(3);
+            }
+        });
+
+        function showQuestion(questionNumber) {
+            video.pause();
+            hideAllQuestions();
+            var questionContainer = document.getElementById("question" + questionNumber);
+            questionContainer.classList.add("active");
+            currentQuestion = questionNumber;
+        }
+
+        function hideAllQuestions() {
+            questionContainers.forEach(function(container) {
+                container.classList.remove("active");
+            });
+        }
+
+        function checkAnswer(questionNumber) {
+            var answer;
+            var feedback;
+            if (questionNumber === 1) {
+                answer = document.querySelector('input[name="answer1"]:checked');
+                feedback = document.getElementById("answer1-feedback");
+            } else if (questionNumber === 2) {
+                answer = document.querySelector('input[name="answer2"]:checked');
+                feedback = document.getElementById("answer2-feedback");
+            } else if (questionNumber === 3) {
+                answer = document.querySelector('input[name="answer3"]:checked');
+                feedback = document.getElementById("answer3-feedback");
+            }
+
+            if (answer) {
+                // 根据需要自定义检查答案的逻辑
+                if (answer.value === "正确答案") {
+                    feedback.textContent = "回答正确！";
+                    feedback.style.color = "green";
+                    feedback.style.display = "block";
+                    setTimeout(function() {
+                        feedback.style.display = "none";
+                        hideAllQuestions();
+                        video.play();
+                    }, 2000);
+                } else {
+                    feedback.textContent = "回答错误，请重新作答！";
+                    feedback.style.color = "red";
+                    feedback.style.display = "block";
+                }
+            } else {
+                alert("请选择答案");
+            }
+        }
+    </script>
+</body>
+</html>
